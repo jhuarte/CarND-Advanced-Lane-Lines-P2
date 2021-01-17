@@ -3,11 +3,12 @@ import cv2
 import pickle
 import glob
 import os
+import sys
 
 
 def calibrate_camera(nx,ny,images):
     """
-    Calibrate camera:
+    Calibrate a camera using the nx,ny parameters (chessboard pattern) and a directory with images of this pattern
     nx: number of corners in a row
     ny: number of corners in a column
     image: list of the images used to calculate the calibration
@@ -31,12 +32,28 @@ def calibrate_camera(nx,ny,images):
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
     return mtx, dist
 
+def undistort(img, mtx, dist):
+    dst = cv2.undistort(img, mtx, dist, None, mtx)
+    return dst
 
 if __name__ == "__main__":
-    images = glob.glob('camera_cal/calibration*.jpg')
-    mtx, dist = calibrate_camera(9,6,images,)
-    dist_pickle = {}
-    dist_pickle["mtx"] = mtx
-    dist_pickle["dist"] = dist
-    pickle.dump( dist_pickle, open(os.sep.join([os.path.dirname(os.path.realpath(__file__)), "calibration.p"]), "wb"))
+    if (len(sys.argv) > 1):
+        if (sys.argv[1] == "calibrate"):
+            images = glob.glob('camera_cal/calibration*.jpg')
+            mtx, dist = calibrate_camera(9,6,images,)
+            dist_pickle = {}
+            dist_pickle["mtx"] = mtx
+            dist_pickle["dist"] = dist
+            pickle.dump( dist_pickle, open(os.sep.join([os.path.dirname(os.path.realpath(__file__)), "calibration.p"]), "wb"))
+        elif (sys.argv[1] == "undist"):
+            img = cv2.imread('camera_cal/calibration1.jpg')
+            dist_pickle = pickle.load(open(os.sep.join([os.path.dirname(os.path.realpath(__file__)), "calibration.p"]), "rb" ) )
+            mtx = dist_pickle["mtx"]
+            dist = dist_pickle["dist"]
+            dst = undistort(img, mtx, dist)
+            cv2.imshow("Undistorted", dst)
+            cv2.imwrite('output_test_images/calibration1_undistort.jpg',dst)            
+    else:
+        print("camera_calibration.py need arguments")
+    
     
