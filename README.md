@@ -323,7 +323,7 @@ def process_image(img):
 ```
 
 Videos:
-* [Project video]()
+* [Project video](https://youtu.be/pCkfgdmMZb4)
 
 ## Discussion
 
