@@ -90,17 +90,45 @@ The result are the following undirstorted images.
 
 On this step I created a pipeline to obtain a thresholded binary image combining the result from color transforms (`RGB`, `HLS` and `LAB` color spaces) and gradients (directional gradient, magnitude and direction). 
 
-The functions implemented regarding the gradient are:
+The functions that create a binary image using the gradient are listed below with the result applied to the same image. Latter we will see how all this functions are combined in one in order to speed up the final pipeline:
 
 * `abs_sobel_thresh(gray, orient = 'x', grad_kernel = 3, grad_thresh = (0, 255)`: Creates a binary image using applying the sobel absolute operator in one axes (`x` or `y`)
 
 <img src="output_test_images/sobel_operator.png">
 
 * `mag_threshold(gray, mag_kernel = 3, mag_thresh = (0, 255))`: Creates a binary image using applying the gradient magnitude
+
+<img src="output_test_images/gradient_magnitude.png">
+
 * `dir_threshold(gray, dir_kernel = 3, dir_thresh = (0, np.pi/2))`: Creates a binary image using applying the gradient direction
 
+<img src="output_test_images/gradient_direction.png">
 
-* `color_threshold(img,s_thresh)`(`img` is the images and the `s_thresh` contain the threshold values): This funtion  transfor the RGB image into the HLS space color to apply a threshold process on the `(S)` channel and make a binarizated imaged. I use the `(S)` channel becuase is the most robust channel althoug we can use other channel or color spaces to make the system even more roboust).
+
+Also a color threshold is used to detect the lines. As we have lines with different colors, we have shadows on the road and other challenges situations, I've applied the thresholds over different color spaces to make the final pipeline more robust.
+
+* `R` channel of the `RGB` color space 
+* `S` channel of the `HLS` color space
+* `L` channel of the `HLS` color space
+* `B` channel of the `LAB` color space
+
+The next figure display each channel of the color spaces used.
+
+<img src="output_test_images/gradient_direction.png">
+
+To apply the threshold of each channel I created this functions:
+* `color_hls_threshold(img, h_thresh=(255,0),l_thresh=(255,0),s_thresh=(255,0))`: Applies a color threshold on the HLS channels. With the default threshold parameters channels are "disabled"
+
+<img src="output_test_images/hls_threshold.png">
+
+* `color_rgb_threshold(img, r_thresh=(255,0),g_thresh=(255,0),b_thresh=(255,0))`: Applies a color threshold on the RGB channels. With the default threshold parameters channels are "disabled"
+
+<img src="output_test_images/rgb_threshold.png">
+
+* `color_lab_threshold(img, l_thresh=(255,0), a_thresh=(255,0), b_thresh=(255,0))`: Applies a color threshold on the LAB channels. With the default threshold parameters channels are "disabled"
+
+<img src="output_test_images/lab_threshold.png">
+
 
 The `combined_threshold(gray,kernel,gradx_thr,grady_thr,mag_thr,dir_thr)` function wraps all of the above functions/steps and return a binary thresholded image `combined_binary` and  `color_binary` (an stacked combination of binary images only for test). The function which is the function called on the final **pipeline**.    
 
