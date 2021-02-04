@@ -84,7 +84,13 @@ undistorted_images = list(map(lambda img: undistort_image_visualization(img,mtx,
 The result are the following undirstorted images.
 
 <img src="output_test_images/undistorted_test_images.png"/>
-
+<img src="output_test_images/undistorted_test1.png"/>
+<img src="output_test_images/undistorted_test2.png"/>
+<img src="output_test_images/undistorted_test3.png"/>
+<img src="output_test_images/undistorted_test4.png"/>
+<img src="output_test_images/undistorted_test5.png"/>
+<img src="output_test_images/undistorted_test6.png"/>
+<img src="output_test_images/undistorted_test7.png"/>
 
 ### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image. Provide an example of a binary image result.
 
@@ -255,6 +261,7 @@ As I told, this method is used only at the beginning or if the tracking systema 
 
 <img src="output_test_images/previous_fit.png">
 
+
 ### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
 We assume the camera is mounted at the center of the car and the deviation of the midpoint of the lane from the center of the image is the offset you're looking for. In the last step we located the lane line pixels and used their x and y pixel positions to fit a second order polynomial curve `f(y) = Ay^2 + By + C`. The radius of curvature [awesome tutorial here](https://www.intmath.com/applications-differentiation/8-radius-curvature.php) at any point xx of the function x = f(y)x=f(y) is given as follows:
@@ -265,11 +272,66 @@ As we assumed that the camera is mounted at the center of the car, such that the
 
 This two functions are implemented in the `Line` class, methods `__calculate_radius_of_curvature` and `__calculate_line_base_pos`. 
 
+```python
+    def __calculate_radius_of_curvature(self):
+        # Define conversions in x and y from pixels space to meters
+        ym_per_pix = 30/720 # meters per pixel in y dimension
+        xm_per_pix = 3.7/640 # meters per pixel in x dimension
+        
+        fit_crv = [self.__best_fit[0]*(xm_per_pix/(ym_per_pix**2)),self.__best_fit[1]*(xm_per_pix/ym_per_pix),self.__best_fit[2]]
+
+        y_eval = np.max(self.__evaly)
+        self.__radius_of_curvature = ((1 + (2 * fit_crv[0] * y_eval + 
+                          fit_crv[1])**2)**1.5) / np.absolute(2 * fit_crv[0])
+```
+
+```python
+ car_position = new_img.shape[1]/2
+ lane_center_position = l_line_x + (r_line_x - l_line_x)/2
+ xm_per_pix = 3.7/640 # meters per pixel in x dimension
+
+ center_dist = (car_position - lane_center_position) * xm_per_pix
+```
+
+Once the lines are detected, curvature calculated and car position we can perform a transformation to display the lines detected over the images.
+
+<img src="output_test_images/re-projection.png" width="480">
+
 # Pipeline (video)
 
+Finally I appliy the pipeline to a video. First we create a function call `process_image` that processs each frame and make some sanity calculations:
+```python
+def process_image(img):
+
+    wraped = pipeline(img, mtx, dist, M)
+    
+    if (left_line.detected and right_line.detected): # If left and right lines are detected
+        leftx, lefty, rightx, righty = search_around_poly(wraped, left_line.best_fit, right_line.best_fit, sap_margin = 70)
+        
+    else:   
+        leftx, lefty, rightx, righty, _, _, _ = find_lane_pixels(wraped, nwindows = 9, margin = 70, minpix = 50)
+      
+    left_line.xy_pixels = (leftx, lefty)
+    right_line.xy_pixels = (rightx, righty)
+    
+    if left_line.best_fit is not None and right_line.best_fit is not None:
+        img_lane = draw_lane_line(img, Minv, left_line.bestfitx, right_line.bestfitx, left_line.ploty)
+        img_param = draw_info(img_lane, left_line.radius_of_curvature, right_line.radius_of_curvature,
+                             left_line.line_base_pos, right_line.line_base_pos)
+
+    return img_param
+```
+
+Videos:
+* [Project video]()
 
 ## Discussion
 
+Improvements to make more robust the algorithm:
+
+* Other methods like neuronal networks could be applied to find the lines, specially at the begining of the process.
+* When appling the sliding window procedure, the histogram could be applied for specific areas where is supossed to be the lines
+* Other color spaces or new tunned parameters (for the challenge video)
 
 # Licence
 [MIT](https://choosealicense.com/licenses/mit/)
