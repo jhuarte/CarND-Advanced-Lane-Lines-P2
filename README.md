@@ -257,12 +257,19 @@ As I told, this method is used only at the beginning or if the tracking systema 
 
 ### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-We assume the camera is mounted at the center of the car and the deviation of the midpoint of the lane from the center of the image is the offset you're looking for. 
+We assume the camera is mounted at the center of the car and the deviation of the midpoint of the lane from the center of the image is the offset you're looking for. In the last step we located the lane line pixels and used their x and y pixel positions to fit a second order polynomial curve `f(y) = Ay^2 + By + C`. The radius of curvature [awesome tutorial here](https://www.intmath.com/applications-differentiation/8-radius-curvature.php) at any point xx of the function x = f(y)x=f(y) is given as follows:
+
+
+
+As we assumed that the camera is mounted at the center of the car, such that the lane center is the midpoint at the bottom of the image between the two lines detected. The offset of the lane center from the center of the image (converted from pixels to meters) is the distance from the center of the lane.
+
+This two functions are implemented in the `Line` class, methods `__calculate_radius_of_curvature` and `__calculate_line_base_pos`. 
 
 # Pipeline (video)
 
 
 ## Discussion
+
 
 # Licence
 [MIT](https://choosealicense.com/licenses/mit/)
