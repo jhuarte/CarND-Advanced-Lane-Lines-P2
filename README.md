@@ -83,7 +83,7 @@ undistorted_images = list(map(lambda img: undistort_image_visualization(img,mtx,
 ```
 The result are the following undirstorted images.
 
-<img src="output_test_images/undistorted_test_images.png" width="240"/>
+<img src="output_test_images/undistorted_test_images.png"/>
 
 
 ### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image. Provide an example of a binary image result.
