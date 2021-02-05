@@ -333,6 +333,15 @@ Improvements to make more robust the algorithm:
 * When appling the sliding window procedure, the histogram could be applied for specific areas where is supossed to be the lines
 * Other color spaces or new tunned parameters (for the challenge video)
 
+Other possible improvements, that I will apply on the next version:
+
+* [Real-Time Lane Detection and alerts for Autonomous Driving](https://towardsdatascience.com/real-time-lane-detection-and-alerts-for-autonomous-driving-1f0a021390ee)
+* [ROBUST AND REAL TIME DETECTION OF CURVY LANES (CURVES) HAVING DESIRED SLOPES FOR DRIVING ASSISTANCE AND AUTONOMOUS VEHICLES, Amartansh Dubey and K. M. Bhurchandi
+Department of Electronics and Communication Engineering, Visvesvaraya Natioanal Institute of Technology, Nagpur, India dubeyamartansh@gmail.com bhurchandikm@ece.vnit.ac.in ](https://airccj.org/CSCP/vol5/csit53211.pdf)
+* [LaneNet lane detection](https://github.com/MaybeShewill-CV/lanenet-lane-detection)
+* [Towards End-to-End Lane Detection: an Instance Segmentation Approach, Davy Neven, Bert De Brabandere, Stamatios Georgoulis, Marc Proesmans, Luc Van Gool](https://arxiv.org/abs/1802.05591)
+
+
 # Licence
 [MIT](https://choosealicense.com/licenses/mit/)
 
